@@ -58,39 +58,100 @@ PrintMovie(firstFictionMovie);
 //2. Sorteren en ordenen //
 
 // Sorteer de films op jaartal, van oud naar nieuw.
-
+var sortedByYear = movies.OrderBy(m => m.Year);
+PrintLines();
+PrintMovies(sortedByYear);
 // Sorteer de films op basis van hun beoordeling (Rating) in aflopende volgorde.
-
+var orderedByRating = movies.OrderByDescending(m => m.Rating);
+PrintLines();
+PrintMovies(orderedByRating);
 // Haal de top 5 best beoordeelde films op.
-
+var top5Rated = movies.OrderByDescending(m => m.Rating).Take(5);
+PrintLines();
+PrintMovies(top5Rated);
 // Geef een lijst van de films gesorteerd op regisseur en vervolgens op jaar.
-
+var sortedByDirectorAndYear = movies.OrderBy(m => m.Director).ThenBy(m => m.Year);
+PrintLines();
+PrintMovies(sortedByDirectorAndYear);
 // Selecteer de nieuwste film in de dataset.
-
+var newestMovie = movies.OrderByDescending(m => m.Year).FirstOrDefault();
+PrintLines();
+PrintMovie(newestMovie);
 //3. Aggregaties en tellingen //
 
 // Tel het aantal films in de dataset.
-
+var numOfMovies = movies.Count();
+PrintLines();
+Console.WriteLine($"Aantal movies = {numOfMovies}");
 // Bepaal de gemiddelde beoordeling (Rating) van alle films.
-
+var averageRating = movies.Average(m => m.Rating);
+PrintLines();
+Console.WriteLine($"Average rating = {averageRating}");
 // Bepaal de oudste film in de dataset.
-
+var oldestMovie = movies.FirstOrDefault(m => m.Year == movies.Min(m => m.Year));
 // Geef de film met de hoogste beoordeling terug.
-
+var highestRated = movies.FirstOrDefault(m => m.Rating == movies.Max(m => m.Rating));
 // Bepaal de totale inkomsten (BoxOffice) van alle films samen (convert naar double).
-
+var totalBoxOffice = movies.Sum(m => 
+{
+    //strip first and last character
+    var boxOffice = m.BoxOffice.Substring(1, (m.BoxOffice.Length - 2));
+    //parse to double
+    var boxOfficeDouble = double.Parse(boxOffice, CultureInfo.InvariantCulture);
+    //check if B => * 1000
+    if (m.BoxOffice.Last().Equals('B'))
+    {
+        boxOfficeDouble *= 1000;
+    }
+    return boxOfficeDouble;
+});
+PrintLines();
+Console.WriteLine($"Total BoxOffice = ${totalBoxOffice}M");
 // 4.Groeperen en samenvoegen //
 
 // Groepeer de films per regisseur en toon hoeveel films elke regisseur heeft gemaakt.
-
+var groupedByDirector = movies.GroupBy(m => m.Director);
+foreach(var group in groupedByDirector)
+{
+    Console.WriteLine($"{group.Key}:{group.Count()}");
+}
 // Groepeer de films op decennium (bijv. 1990-1999, 2000-2009, etc.).
-
+var groupedByDecade = movies.GroupBy(m => (m.Year / 10) * 10).OrderBy(m =>m.Key);
+foreach(var group in groupedByDecade)
+{
+    PrintLines();
+    Console.WriteLine($"{group.Key}");
+    foreach(var movie in group)
+    {
+        PrintMovie(movie);
+    }  
+}
 // Geef een overzicht van het gemiddelde IMDb-cijfer per genre.
+var groupedByGenreAvgRating = movies
+    .SelectMany(m => m.Genre, (movie, genre) => (movie.Rating, genre))
+    .GroupBy(g => g.genre);
+foreach(var group in groupedByGenreAvgRating)
+{
+    Console.WriteLine($"{group.Key}:{group.Average(g => g.Rating)}");
+}
 
 // Groepeer de films op land en toon het aantal films per land.
-
+var groupedByCountry = movies.GroupBy(m => m.Country).OrderBy(g => g.Key);
+foreach(var group in groupedByCountry)
+{
+    Console.WriteLine($"{group.Key}:{group.Count()}");
+}
 // Geef een lijst van alle regisseurs en de films die ze hebben gemaakt, netjes gegroepeerd.
-
+var groupedByDirectors = movies.GroupBy(m => m.Director).OrderBy(g => g.Key);
+foreach(var group in groupedByDirectors)
+{
+    PrintLines();
+    Console.WriteLine($"{group.Key}");
+    foreach(var movie in group)
+    {
+        PrintMovie(movie);
+    }
+}
 
 
 
