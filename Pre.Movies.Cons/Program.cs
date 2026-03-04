@@ -22,29 +22,39 @@ var movieTitles = movies.Select(m => m.Title);
 //    Console.Write(title);
 //}
 //string.Join
-Console.WriteLine(string.Join(",",movieTitles));
+Console.WriteLine(string.Join(",", movieTitles));
 // Filter de films die na het jaar 2000 zijn uitgebracht.
 var moviesAfter2000 = movies.Where(m => m.Year > 2000);
 PrintMovies(moviesAfter2000);
 // Geef een lijst van alle unieke genres die in de dataset voorkomen.
 //SelectMany => flattening => Distinct
 var uniqueMovieGenres = movies.SelectMany(m => m.Genre);
-Console.WriteLine(string.Join(",",uniqueMovieGenres));
+Console.WriteLine(string.Join(",", uniqueMovieGenres));
 
 // Selecteer alle films van een specifieke regisseur (bijv. "Christopher Nolan").
-
+var moviesFromNolan = movies.Where(m => m.Director.Contains("Nolan"));
+PrintLines();
+PrintMovies(moviesFromNolan);
 // Haal alle films op waarin een specifieke acteur meespeelt (bijv. "Leonardo DiCaprio").
-
+var moviesFromLeo = movies.Where(m => m.Actors.Contains("Leonardo Di Caprio"));
 //haal de eerste film op
-
+PrintLines();
+var firstMovie = movies.FirstOrDefault();
 //haal de laatste film op
-
+PrintLines();
+var lastMovie = movies.LastOrDefault();
 //haal de eerste drie films op
-
+var firstThreeMovies = movies.Take(3);
+PrintLines();
+PrintMovies(firstThreeMovies);
 //haal films op positie 3 tem 5
-
+PrintLines();
+var sliced = movies.Skip(2).Take(3);
+PrintMovies(sliced);
 //haal de eerste film op met het woord 'Fiction' in de titel
-
+var firstFictionMovie = movies.FirstOrDefault(m => m.Title.Contains("Fiction"));
+PrintLines();
+PrintMovie(firstFictionMovie);
 //2. Sorteren en ordenen //
 
 // Sorteer de films op jaartal, van oud naar nieuw.
@@ -92,7 +102,7 @@ void PrintLines()
 }
 void PrintMovies(IEnumerable<Movie> movies)
 {
-    foreach(var movie in movies)
+    foreach (var movie in movies)
     {
         PrintLines();
         PrintMovie(movie);
